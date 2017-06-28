@@ -24,6 +24,7 @@ import org.xml.sax.SAXException;
 import static spark.Spark.*;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -136,13 +137,15 @@ public class Main {
         post("/validateString", "application/xml", (req, res) -> {
             String xml = req.queryParams("xml");
             //System.out.println("string input: " + xml);
-            boolean isXsdValid = Main.validateXsd(xml);
-            boolean isSchematronValid = Main.validateSchematron(xml);
-            boolean isRenderValid = Main.validateRender(xml);
-            boolean isAnnotationValid = Main.validateAnnotation(xml);
+            Response json = new Response();
+            json.isXsdValid = Main.validateXsd(xml);
+            /*json.isSchematronValid = Main.validateSchematron(xml);
+            json.isRenderValid = Main.validateRender(xml);
+            json.isAnnotationValid = Main.validateAnnotation(xml);*/
 
             Gson gson = new Gson();
-            return gson.toJson(isXsdValid);
+            System.out.println(gson.toJson(json));
+            return gson.toJson(json);
 
             /*return "Xsd valid: " + isXsdValid + "\nSchematron valid: " + isSchematronValid
                     + "\nRenderInfo valid: " + isRenderValid
@@ -165,6 +168,7 @@ public class Main {
         try {
             result = org.sbgn.SbgnUtil.isValid(tempXmlFile);
         } catch (SAXException sex) {
+            System.out.println("SAX exception");
             sex.printStackTrace();
             /*StackTraceElement elements[] = sex.getStackTrace();
             for (int i = 0, n = elements.length; i < n; i++) {
@@ -174,9 +178,11 @@ public class Main {
                         + elements[i].getMethodName() + "()");
             }*/
         } catch (JAXBException e) {
+            System.out.println("JAXB exception");
             e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("IO or unmarshall exception");
+            System.out.println(e.getCause().getMessage());
         }
         return result;
     }
@@ -384,4 +390,11 @@ public class Main {
         return doc;
     }
 
+}
+
+class Response {
+    public boolean isXsdValid = false;
+    public boolean isSchematronValid = false;
+    public boolean isRenderValid = false;
+    public boolean isAnnotationValid = false;
 }
