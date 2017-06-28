@@ -117,6 +117,15 @@ public class Main {
             "</sbgn>";
 
     public static void main(String[] args) {
+        post("/returnString", "application/xml", (req, res) -> {
+            String xml = req.queryParams("xml");
+
+            return xml;
+        });
+
+        post("/test", (req, res) -> {
+            return "hello world";
+        });
 
         // test cmd:
         // curl -X POST --data "xml=$(cat src/main/resources/example.sbgn)" http://localhost:4567/validateString
