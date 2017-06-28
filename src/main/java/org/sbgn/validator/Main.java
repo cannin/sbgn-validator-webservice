@@ -1,5 +1,8 @@
 package org.sbgn.validator;
 
+import com.google.gson.Gson;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
 import com.thaiopensource.validate.ValidationDriver;
 import org.sbgn.bindings.Sbgn;
 import org.sbgn.schematron.Issue;
@@ -138,9 +141,12 @@ public class Main {
             boolean isRenderValid = Main.validateRender(xml);
             boolean isAnnotationValid = Main.validateAnnotation(xml);
 
-            return "Xsd valid: " + isXsdValid + "\nSchematron valid: " + isSchematronValid
+            Gson gson = new Gson();
+            return gson.toJson(isXsdValid);
+
+            /*return "Xsd valid: " + isXsdValid + "\nSchematron valid: " + isSchematronValid
                     + "\nRenderInfo valid: " + isRenderValid
-                    + "\nAnnotation valid: " + isAnnotationValid;
+                    + "\nAnnotation valid: " + isAnnotationValid;*/
         });
 
         // for testing purpose
