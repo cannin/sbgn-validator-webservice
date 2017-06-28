@@ -25,7 +25,7 @@
             <artifactId>org.sbgn-with-dependencies</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/org.sbgn-with-dependencies.jar</systemPath>
+            <systemPath>${project.basedir}/lib/org.sbgn-with-dependencies.jar</systemPath>
         </dependency>
 
         <dependency>
