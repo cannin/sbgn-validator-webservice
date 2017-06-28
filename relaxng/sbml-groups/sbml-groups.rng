@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- NOTICE * NOTICE * NOTICE * NOTICE * NOTICE * NOTICE * NOTICE
+  
+   This is not a standalone schema; it is designed with the
+   assumption that it is included by a parent schema.  The
+   parent schema must define the core SBML Level 3 constructs
+   and data types.  Please see the file ../sbml.rng and the
+   information written at http://sbml.org/RNG_validation
+-->
+
+<!-- current schema reflects Groups Version 1 Release Candidate 2 Feb 2016 -->
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+  ns="http://www.sbml.org/sbml/level3/version1/groups/version1"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  
+  
+<!-- simple types defined in groups -->
+  <define name="GroupKind.simpleType">
+    <choice>
+      <value type="string">classification</value>
+      <value type="string">partonomy</value>
+      <value type="string">collection</value>
+    </choice>
+  </define>
+  
+  <!-- member class -->
+  <define name="member.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+    </interleave>
+    <optional>
+      <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+        <ref name="SId.simpleType"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="name" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+        <data type="string"/>
+      </attribute>
+    </optional>
+    <choice>
+      <attribute name="idRef" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>      
+      <attribute name="metaIdRef" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+        <data type="IDREF"/>
+      </attribute>      
+    </choice>
+  </define>
+  
+  <define name="listOfMembers.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <optional>
+        <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+          <ref name="SId.simpleType"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="name" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+          <data type="string"/>
+        </attribute>
+      </optional>
+      <oneOrMore>
+        <element name="member">
+          <ref name="member.datatype"/>
+        </element>
+      </oneOrMore>
+    </interleave>
+  </define>
+  
+  <!-- memberConstraints class -->
+  <!-- removed from version 1 -->
+<!--  <define name="memberConstraint.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+    </interleave>
+    <optional>
+      <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+        <ref name="SId.simpleType"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="name" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+        <data type="string"/>
+      </attribute>
+    </optional>
+    <choice>
+      <attribute name="distinctAttribute" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+        <data type="string"/>
+      </attribute>      
+      <attribute name="identicalAttribute" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+        <data type="string"/>
+      </attribute>            
+    </choice>
+  </define>
+  
+  <define name="listOfMemberConstraints.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <zeroOrMore>
+        <element name="memberConstraint">
+          <ref name="memberConstraint.datatype"/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+    <optional>
+      <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+        <ref name="SId.simpleType"/>
+      </attribute>      
+    </optional>
+    <optional>
+      <attribute name="name" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+        <data type="string"/>
+      </attribute>
+    </optional>
+    <attribute name="membersShareType" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+      <data type="boolean"/>
+    </attribute>      
+  </define>
+-->
+  
+<!-- group class -->  
+  <define name="group.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <optional>
+        <element name="listOfMembers">
+          <ref name="listOfMembers.datatype"/>
+        </element>
+      </optional>
+      <!-- removed in version 1
+      <optional>
+        <element name="listOfMemberConstraints">
+          <ref name="listOfMemberConstraints.datatype"/>
+        </element>
+      </optional> -->
+    </interleave>
+    <optional>
+      <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+        <ref name="SId.simpleType"/>
+      </attribute>      
+    </optional>
+    <optional>
+      <attribute name="name" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+        <data type="string"/>
+      </attribute>
+    </optional>
+    <attribute name="kind" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+      <ref name="GroupKind.simpleType"/>
+    </attribute>      
+  </define>
+  
+  <define name="listOfGroups.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <oneOrMore>
+        <element name="group">
+          <ref name="group.datatype"/>
+        </element>
+      </oneOrMore>
+    </interleave>
+  </define>
+
+<!-- the core model element is extended --> 
+  <define name="model.datatype" combine="interleave">
+    <optional>
+      <element name="listOfGroups">
+        <ref name="listOfGroups.datatype"/>
+      </element>
+    </optional>
+  </define>
+  
+  <!-- The following is the type definition for the top-level element in an SBML document.-->
+  
+  <define name="sbml.datatype" combine="interleave">
+    <!-- MUST PUT ns -->
+    <attribute name="required" ns="http://www.sbml.org/sbml/level3/version1/groups/version1">
+        <value type="boolean"> false </value>
+      </attribute>
+  </define>
+  
+  
+</grammar>

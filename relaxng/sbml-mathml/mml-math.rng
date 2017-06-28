@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+ datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+
+ <!-- math element
+     This is the root element
+     
+     In sbml a math element can contain either a node or a lambda 
+     element.
+-->
+
+ <define name="math.datatype">
+  <choice>
+   <ref name="node.datatype"/>
+   <ref name="lambda.datatype"/>
+  </choice>
+ </define>
+
+</grammar>

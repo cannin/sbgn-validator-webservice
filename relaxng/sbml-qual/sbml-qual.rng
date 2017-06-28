@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- NOTICE * NOTICE * NOTICE * NOTICE * NOTICE * NOTICE * NOTICE
+  
+   This is not a standalone schema; it is designed with the
+   assumption that it is included by a parent schema.  The
+   parent schema must define the core SBML Level 3 constructs
+   and data types.  Please see the file ../sbml.rng and the
+   information written at http://sbml.org/RNG_validation
+-->
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+ datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+ xmlns:qual="http://www.sbml.org/sbml/level3/version1/qual/version1">
+
+  <!-- NOTE: I've ordered all the definitions in depth-first-search order. Please keep them ordered :) -->
+  
+  <define name="sbml.datatype" combine="interleave">
+    <optional>
+      <!-- mark the required attribute as optional to assist validation with multiple packages -->
+    <attribute name="qual:required" >
+      <data type="boolean"/>
+    </attribute>
+      </optional>
+  </define>
+
+  <!-- modelDefinition extends model -->
+    
+  <define name="model.datatype" combine="interleave">
+    <interleave>
+      <optional>
+        <element name="qual:listOfTransitions">
+          <ref name="listOfTransitions.datatype"/>
+        </element>
+      </optional>
+      <optional>
+        <element name="qual:listOfQualitativeSpecies">
+          <ref name="listOfQualitativeSpecies.datatype"/>
+        </element>
+      </optional>
+    </interleave>
+  </define>
+
+  <define name="listOfTransitions.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <oneOrMore>
+        <element name="qual:transition">
+          <ref name="transition.datatype"/>
+        </element>
+      </oneOrMore>
+    </interleave>
+  </define>
+
+  <define name="transition.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <optional>
+        <attribute name="qual:id">
+          <ref name="SId.simpleType"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="qual:name">
+          <data type="string"/>
+        </attribute>
+      </optional>
+      <optional>
+        <element name="qual:listOfInputs">
+          <ref name="listOfInputs.datatype"/>
+        </element>
+      </optional>
+      <optional>      
+       <element name="qual:listOfOutputs">
+        <ref name="listOfOutputs.datatype"/>
+      </element>
+      </optional>
+        <element name="qual:listOfFunctionTerms">
+          <ref name="listOfFunctionTerms.datatype"/>
+        </element>     
+    </interleave>
+  </define>
+
+
+  <define name="sign.simpleType">
+    <choice>
+      <value type="string">positive</value>
+      <value type="string">negative</value>
+      <value type="string">unknown</value>
+      <value type="string">dual</value>
+    </choice>
+  </define>
+
+  <define name="listOfInputs.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <zeroOrMore>
+        <element name="qual:input">
+          <ref name="input.datatype"/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </define>
+
+  <define name="input.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <optional>
+        <attribute name="qual:id">
+          <ref name="SId.simpleType"/>
+        </attribute>
+      </optional>
+      <attribute name="qual:qualitativeSpecies">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>
+      <attribute name="qual:transitionEffect">
+        <ref name="transitionInputEffect.simpleType"/>
+      </attribute>
+      <optional>
+        <attribute name="qual:sign">
+          <ref name="sign.simpleType"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="qual:name">
+          <data type="string"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="qual:thresholdLevel">
+          <data type="integer"/>
+        </attribute>
+      </optional>
+    </interleave>
+  </define>
+
+  <define name="transitionInputEffect.simpleType">
+    <choice>
+      <value type="string">none</value>
+      <value type="string">consumption</value>      
+    </choice>
+  </define>
+
+  <define name="transitionOutputEffect.simpleType">
+    <choice>
+      <value type="string">production</value>
+      <value type="string">assignmentLevel</value>
+    </choice>
+  </define>
+
+  <define name="listOfOutputs.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <zeroOrMore>
+        <element name="qual:output">
+          <ref name="output.datatype"/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </define>
+
+  <define name="output.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <optional>
+        <attribute name="qual:id">
+          <ref name="SId.simpleType"/>
+        </attribute>
+      </optional>
+      <attribute name="qual:qualitativeSpecies">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>
+      <attribute name="qual:transitionEffect">
+        <ref name="transitionOutputEffect.simpleType"/>
+      </attribute>
+      <optional>
+        <attribute name="qual:name">
+          <data type="string"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="qual:outputLevel">
+          <data type="integer"/>
+        </attribute>
+      </optional>
+    </interleave>
+  </define>
+
+  <define name="listOfFunctionTerms.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <element name="qual:defaultTerm">
+        <ref name="defaultTerm.datatype"/>
+      </element>
+      <zeroOrMore>
+        <element name="qual:functionTerm">
+          <ref name="functionTerm.datatype"/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </define>
+
+  <define name="defaultTerm.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <attribute name="qual:resultLevel">
+        <data type="integer"/>
+      </attribute>
+    </interleave>
+  </define>
+
+  <define name="functionTerm.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <attribute name="qual:resultLevel">
+        <data type="integer"/>
+      </attribute>
+      <ref name="math.datatype"/>
+    </interleave>
+  </define>
+
+  <define name="listOfQualitativeSpecies.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <oneOrMore>
+        <element name="qual:qualitativeSpecies">
+          <ref name="qualitativeSpecies.datatype"/>
+        </element>
+      </oneOrMore>
+    </interleave>
+  </define>
+
+  <define name="qualitativeSpecies.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <attribute name="qual:id">
+        <ref name="SId.simpleType"/>
+      </attribute>
+      <attribute name="qual:compartment" ns="">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>
+      <attribute name="qual:constant">
+        <data type="boolean"/>
+      </attribute>
+      
+      <optional>
+        <attribute name="qual:name">
+          <data type="string"/>
+        </attribute>
+      </optional>     
+      <optional>
+        <attribute name="qual:initialLevel">
+          <data type="integer"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="qual:maxLevel">
+          <data type="integer"/>
+        </attribute>
+      </optional>
+
+      
+
+    </interleave>
+  </define>
+
+  
+
+  
+
+</grammar>

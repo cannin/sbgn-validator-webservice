@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- NOTICE * NOTICE * NOTICE * NOTICE * NOTICE * NOTICE * NOTICE
+  
+   This is not a standalone schema; it is designed with the
+   assumption that it is included by a parent schema.  The
+   parent schema must define the core SBML Level 3 constructs
+   and data types.  Please see the file ../sbml.rng and the
+   information written at http://sbml.org/RNG_validation
+-->
+<!-- current schema reflects Distrib Specification Version 0.14 XX March 2015 -->
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+  ns="http://www.sbml.org/sbml/level3/version1/distrib/version1"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+
+  <!-- simple types defined in distrib -->
+  <define name="UncertId.simpleType">
+    <ref name="SId.simpleType"/>
+  </define>
+
+  <define name="UncertIdRef.simpleType">
+    <ref name="UncertId.simpleType"/>
+  </define>
+
+
+
+  <!-- additional elements for distrib -->
+
+  <!-- distribInput class -->
+  <define name="distribInput.datatype">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/distrib/version1">
+        <ref name="UncertId.simpleType"/>
+      </attribute>
+      <optional>
+        <attribute name="name" ns="http://www.sbml.org/sbml/level3/version1/distrib/version1">
+          <data type="string"/>
+        </attribute>
+      </optional>
+      <attribute name="index" ns="http://www.sbml.org/sbml/level3/version1/distrib/version1">
+        <data type="nonNegativeInteger"/>
+      </attribute>
+    </interleave>
+  </define>
+
+  <define name="listOfDistribInputs.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <oneOrMore>
+        <element name="distribInput" ns="http://www.sbml.org/sbml/level3/version1/distrib/version1">
+          <ref name="distribInput.datatype"/>
+        </element>
+      </oneOrMore>
+    </interleave>
+  </define>
+
+  <!-- Distribution class -->
+  <define name="distribution.datatype" combine="interleave">
+    <mixed>
+      <zeroOrMore>
+        <element>
+          <nsName ns="http://www.uncertml.org/3.0"/>
+          <zeroOrMore>
+            <attribute>
+              <anyName/>
+              <text/>
+            </attribute>
+          </zeroOrMore>
+          <ref name="distribution.datatype"/>
+        </element>
+      </zeroOrMore>
+    </mixed>
+  </define>
+
+  <!-- drawFromDistribution class -->
+  <define name="drawFromDistrib.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <ref name="distribution.datatype"/>
+      <optional>
+        <element name="listOfDistribInputs"
+          ns="http://www.sbml.org/sbml/level3/version1/distrib/version1">
+          <ref name="listOfDistribInputs.datatype"/>
+        </element>
+      </optional>
+    </interleave>
+  </define>
+
+  <!-- uncertainty class -->
+  <define name="uncertainty.datatype">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <ref name="distribution.datatype"/>
+      <optional>
+        <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/distrib/version1">
+          <ref name="SId.simpleType"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="name" ns="http://www.sbml.org/sbml/level3/version1/distrib/version1">
+          <data type="string"/>
+        </attribute>
+      </optional>
+    </interleave>
+  </define>
+
+  <!-- extended SBase -->
+  <define name="SBase.datatype" combine="interleave">
+    <interleave>
+      <optional>
+        <element name="uncertainty">
+          <ref name="uncertainty.datatype"/>
+        </element>
+      </optional>
+    </interleave>
+  </define>
+
+  <!-- extended functionDefinition -->
+  <define name="functionDefinition.datatype" combine="interleave">
+    <optional>
+      <element name="drawFromDistribution"
+        ns="http://www.sbml.org/sbml/level3/version1/distrib/version1">
+        <ref name="drawFromDistrib.datatype"/>
+      </element>
+    </optional>
+  </define>
+
+  <!-- top level sbml element -->
+  <define name="sbml.datatype" combine="interleave">
+    <!-- MUST PUT ns -->
+    <attribute name="required" ns="http://www.sbml.org/sbml/level3/version1/distrib/version1">
+      <value type="boolean"> true </value>
+    </attribute>
+  </define>
+
+</grammar>

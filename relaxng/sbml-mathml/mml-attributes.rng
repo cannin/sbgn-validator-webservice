@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+ datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+ 
+ <!-- attributes
+  these are the sets of attributes that apply to different elements
+  
+  mathml_attrib: class, style, id which are optionally on all mathml elements
+
+  annotation_attrib: encoding required on annotation or annotation-xml
+  
+  cn_attrib: type optionally on a cn element but restricted to
+             integer; rational; real; exponential
+ --> 
+ 
+ <define name="mathml_attrib" combine="interleave">
+  <optional>
+   <attribute name="class">
+    <data type="NMTOKENS"/>
+   </attribute>
+  </optional>
+  <optional>
+   <attribute name="style">
+    <data type="string"/>
+   </attribute>
+  </optional>
+  <optional>
+   <attribute name="id">
+    <data type="ID"/>
+   </attribute>
+  </optional>
+ </define>
+ 
+ <define name="annotation_attrib" combine="interleave">
+  <ref name="mathml_attrib"/>
+  <attribute name="encoding">
+   <data type="string"/>
+  </attribute>
+ </define>
+ 
+ <define name="cn_attrib" combine="interleave">
+  <ref name="mathml_attrib"/>
+  <optional>
+  <attribute name="type">
+   <choice>
+    <value type="NMTOKEN">rational</value>
+    <value type="NMTOKEN">e-notation</value>
+    <value type="NMTOKEN">integer</value>
+    <value type="NMTOKEN">real</value>
+   </choice>
+  </attribute>
+  </optional>
+ </define>
+ 
+</grammar>

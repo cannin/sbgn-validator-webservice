@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" req:required="false" xmlns:req="http://www.sbml.org/sbml/level3/version1/req/version1" version="1" level="3"  xmlns:distrib="http://www.sbml.org/sbml/level3/version1/distrib/version1" distrib:required="true">
+  <model>
+    <listOfFunctionDefinitions> 
+      <functionDefinition id="unitGaussian"> 
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> 
+          <lambda>
+            <bvar>
+              <ci> mean </ci>
+            </bvar>
+            <bvar>
+              <ci> variance </ci>
+            </bvar>
+            <ci> mean </ci>
+          </lambda>
+        </math> 
+        <distrib:drawFromDistribution>
+          <distrib:listOfDistribInputs>
+            <distrib:distribInput distrib:id="mean" distrib:index="0"/>
+            <distrib:distribInput distrib:id="var" distrib:index="1"/>
+          </distrib:listOfDistribInputs>
+          <UncertML xmlns="http://www.uncertml.org/3.0">
+            <NormalDistribution  definition="http://www.uncertml.org/distributions/normal">
+              <mean> <var varId="arg1"/> </mean>
+              <variance> <var varId="arg2"/> </variance>
+            </NormalDistribution>
+          </UncertML>
+        </distrib:drawFromDistribution>
+        <req:listOfChangedMaths>
+          <req:changedMath req:changedBy="http://www.sbml.org/sbml/level3/version1/distrib/version1"
+            req:viableWithoutChange="true" />
+        </req:listOfChangedMaths>
+      </functionDefinition> 
+    </listOfFunctionDefinitions> 
+  </model>
+</sbml>

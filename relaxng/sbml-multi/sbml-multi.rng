@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- NOTICE * NOTICE * NOTICE * NOTICE * NOTICE * NOTICE * NOTICE
+  
+   This is not a standalone schema; it is designed with the
+   assumption that it is included by a parent schema.  The
+   parent schema must define the core SBML Level 3 constructs
+   and data types.  Please see the file ../sbml.rng and the
+   information written at http://sbml.org/RNG_validation
+-->
+
+<!-- current schema reflects Multi Specification Version 1 Release 0.6  April 2016 -->
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+  xmlns:multi="http://www.sbml.org/sbml/level3/version1/multi/version1">
+
+  <!-- simple types -->
+
+  <define name="BindingStatus.simpleType">
+    <choice>
+      <value type="string">bound</value>
+      <value type="string">unbound</value>
+      <value type="string">either</value>
+    </choice>
+  </define>
+
+  <define name="Relation.simpleType">
+    <choice>
+      <value type="string">and</value>
+      <value type="string">or</value>
+      <value type="string">not</value>
+    </choice>
+  </define>
+
+  <!-- basic classes -->
+
+  <!-- possibleSpeciesFeatureValue  -->
+  <define name="possibleSpeciesFeatureValue.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+            <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SId.simpleType"/>
+      </attribute>
+      <optional>
+                <attribute name="name" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <data type="string"/>
+        </attribute>
+      </optional>
+      <optional>
+                <attribute name="numericValue" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="SIdRef.simpleType"/>
+        </attribute>
+      </optional>
+    </interleave>
+  </define>
+    <!--definition of listOfPossibleSpeciesFeatureValues-->
+    <define combine="interleave" name="listOfPossibleSpeciesFeatureValues.datatype">
+        <interleave>
+            <ref name="SBase.datatype"/>
+            <oneOrMore>
+              <element name="possibleSpeciesFeatureValue" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+                    <ref name="possibleSpeciesFeatureValue.datatype"/>
+                </element>
+            </oneOrMore>
+        </interleave>
+    </define>
+  <!-- SpeciesFeatureValue  -->
+  <define name="speciesFeatureValue.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+            <attribute name="value" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>     
+    </interleave>
+  </define>
+    <!--definition of listOfSpeciesFeatureValues-->
+    <define combine="interleave" name="listOfSpeciesFeatureValues.datatype">
+        <interleave>
+            <ref name="SBase.datatype"/>
+            <oneOrMore>
+              <element name="speciesFeatureValue" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+                    <ref name="speciesFeatureValue.datatype"/>
+                </element>
+            </oneOrMore>
+        </interleave>
+    </define>
+  <!-- compartmentReference -->
+  <define name="listOfCompartmentReferences.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <oneOrMore>
+        <element name="compartmentReference" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="compartmentReference.datatype"/>
+        </element>
+      </oneOrMore>
+    </interleave>
+  </define>
+
+  <define name="compartmentReference.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <optional>
+                <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="SId.simpleType"/>
+        </attribute>
+      </optional>
+      <optional>
+                <attribute name="name" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <data type="string"/>
+        </attribute>
+      </optional>
+            <attribute name="compartment" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>
+    </interleave>
+  </define>
+
+  <!-- speciesTypeInstance -->
+  <define name="listOfSpeciesTypeInstances.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <oneOrMore>
+        <element name="multi:speciesTypeInstance" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="speciesTypeInstance.datatype"/>
+        </element>
+      </oneOrMore>
+    </interleave>
+  </define>
+
+  <define name="speciesTypeInstance.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+            <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SId.simpleType"/>
+      </attribute>
+      <optional>
+                <attribute name="name" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <data type="string"/>
+        </attribute>
+      </optional>
+            <attribute name="speciesType" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>
+      <optional>
+                <attribute name="compartmentReference" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="SIdRef.simpleType"/>
+        </attribute>
+      </optional>
+    </interleave>
+  </define>
+
+  <!-- inSpeciesTypeBond -->
+  <define name="listOfInSpeciesTypeBonds.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <oneOrMore>
+        <element name="inSpeciesTypeBond" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="inSpeciesTypeBond.datatype"/>
+        </element>
+      </oneOrMore>
+    </interleave>
+  </define>
+
+  <define name="inSpeciesTypeBond.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <optional>
+                <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="SId.simpleType"/>
+        </attribute>
+      </optional>
+      <optional>
+                <attribute name="name" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <data type="string"/>
+        </attribute>
+      </optional>
+            <attribute name="bindingSite1" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>
+            <attribute name="bindingSite2" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>
+    </interleave>
+  </define>
+
+
+  <!-- outwardBindingSite -->
+  <define name="listOfOutwardBindingSites.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <oneOrMore>
+        <element name="outwardBindingSite" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="outwardBindingSite.datatype"/>
+        </element>
+      </oneOrMore>
+    </interleave>
+  </define>
+  
+  <define name="outwardBindingSite.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+            <attribute name="bindingStatus" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="BindingStatus.simpleType"/>
+      </attribute>
+            <attribute name="component" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>
+    </interleave>
+  </define>
+  
+  <!-- speciesFeatureChange -->
+  <define name="listOfSpeciesFeatureChanges.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <oneOrMore>
+        <element name="speciesFeatureChange" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="speciesFeatureChange.datatype"/>
+        </element>
+      </oneOrMore>
+    </interleave>
+  </define>
+  
+  <define name="speciesFeatureChange.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <optional>
+                <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="SId.simpleType"/>
+        </attribute>
+      </optional>
+            <attribute name="reactantSpeciesFeature" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>
+            <attribute name="productSpeciesFeature" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>
+    </interleave>
+  </define>
+  
+  <!-- more complex classes -->
+
+  <!-- speciesFeatureType -->
+  <define name="listOfSpeciesFeatureTypes.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <oneOrMore>
+        <element name="speciesFeatureType" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="speciesFeatureType.datatype"/>
+        </element>
+      </oneOrMore>
+    </interleave>
+  </define>
+
+  <define name="speciesFeatureType.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+            <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+                <ref name="SId.simpleType"/>
+            </attribute>
+            <optional>
+                <attribute name="name" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+                    <data type="string"/>
+                </attribute>
+            </optional>
+            <attribute name="occur" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+                <data type="positiveInteger"/>
+            </attribute>
+            <optional>
+              <element name="listOfPossibleSpeciesFeatureValues" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+                    <ref name="listOfPossibleSpeciesFeatureValues.datatype"/>
+                </element>
+            </optional>
+    </interleave>
+  </define>
+
+  <!-- speciesTypeComponentIndex -->
+  <define name="listOfSpeciesTypeComponentIndexes.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <oneOrMore>
+        <element name="speciesTypeComponentIndex" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="speciesTypeComponentIndex.datatype"/>
+        </element>
+      </oneOrMore>
+    </interleave>
+  </define>
+
+  <define name="speciesTypeComponentIndex.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+            <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SId.simpleType"/>
+      </attribute>
+            <attribute name="component" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>
+      <optional>
+                <attribute name="identifyingParent" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="SIdRef.simpleType"/>
+        </attribute>
+      </optional>
+    </interleave>
+  </define>
+
+  <!-- speciesFeature -->
+  <define name="listOfSpeciesFeatures.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <zeroOrMore>
+        <element name="speciesFeature" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="speciesFeature.datatype"/>
+        </element>
+      </zeroOrMore>
+      <zeroOrMore>
+        <element name="subListOfSpeciesFeatures" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="sublistOfSpeciesFeatures.datatype"/>
+        </element>
+      </zeroOrMore>
+      <!-- removed in v 1.0.6 -->
+<!--      <optional>
+                <attribute name="relation" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="Relation.simpleType"/>
+        </attribute>
+      </optional>
+-->    </interleave>
+  </define>
+  
+  <define name="sublistOfSpeciesFeatures.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <zeroOrMore>
+        <element name="speciesFeature" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="speciesFeature.datatype"/>
+        </element>
+      </zeroOrMore>
+      <optional>
+        <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="SId.simpleType"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="relation" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="Relation.simpleType"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="component" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="SIdRef.simpleType"/>
+        </attribute>
+      </optional>
+    </interleave>
+  </define>
+
+  <define name="speciesFeature.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <optional>
+                <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="SId.simpleType"/>
+        </attribute>
+      </optional>      
+            <attribute name="speciesFeatureType" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>
+            <attribute name="occur" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <data type="positiveInteger"/>
+      </attribute>
+            <optional>
+        <attribute name="multi:component">
+        <ref name="SIdRef.simpleType"/>
+        </attribute>
+      </optional>
+            <optional>
+              <element name="listOfSpeciesFeatureValues" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+                    <ref name="listOfSpeciesFeatureValues.datatype"/>
+                </element>
+            </optional>
+      </interleave>
+  </define>
+
+  <!-- speciesTypeComponentMapInProduct -->
+  <define name="listOfSpeciesTypeComponentMapsInProduct.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <oneOrMore>
+        <element name="speciesTypeComponentMapInProduct" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="speciesTypeComponentMapInProduct.datatype"/>
+        </element>
+      </oneOrMore>
+    </interleave>
+  </define>
+  
+  <define name="speciesTypeComponentMapInProduct.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <optional>
+        <element name="listOfSpeciesFeatureChanges" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="listOfSpeciesFeatureChanges.datatype"/>
+        </element>
+      </optional>
+            <attribute name="reactant" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>
+            <attribute name="reactantComponent" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>
+            <attribute name="productComponent" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SIdRef.simpleType"/>
+      </attribute>
+    </interleave>
+  </define>
+  
+  <!-- new top level classes  -->
+  
+  <!-- speciesType -->
+  <define name="listOfSpeciesTypes.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <oneOrMore>
+        <element name="speciesType" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="speciesType.datatype"/>
+        </element>
+      </oneOrMore>
+    </interleave>
+  </define>
+
+  <define name="speciesType.datatype" combine="interleave">
+    <interleave>
+      <ref name="SBase.datatype"/>
+      <optional>
+        <element name="listOfSpeciesFeatureTypes" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="listOfSpeciesFeatureTypes.datatype"/>
+        </element>
+      </optional>
+      <optional>
+        <element name="listOfSpeciesTypeInstances" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="listOfSpeciesTypeInstances.datatype"/>
+        </element>
+      </optional>
+      <optional>
+        <element name="listOfSpeciesTypeComponentIndexes" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="listOfSpeciesTypeComponentIndexes.datatype"/>
+        </element>
+      </optional>
+      <optional>
+        <element name="listOfInSpeciesTypeBonds" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="listOfInSpeciesTypeBonds.datatype"/>
+        </element>
+      </optional>
+            <attribute name="id" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <ref name="SId.simpleType"/>
+      </attribute>
+      <optional>
+                <attribute name="name" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <data type="string"/>
+        </attribute>
+      </optional>
+      <optional>
+                <attribute name="compartment" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="SIdRef.simpleType"/>
+        </attribute>
+      </optional>
+    </interleave>
+  </define>
+
+  <define name="intraSpeciesReaction.datatype" combine="interleave">
+    <ref name="reaction.datatype"/> 
+  </define>
+  <!-- extensions to core classes -->
+
+  <!-- extend the sbml compartment; add a listOfCompartmentReferences -->
+  <define name="compartment.datatype" combine="interleave">
+    <interleave>
+      <optional>
+        <element name="listOfCompartmentReferences"  ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+                  <ref name="listOfCompartmentReferences.datatype"/>
+        </element>
+      </optional>
+      <optional>
+                <attribute name="compartmentType" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="SIdRef.simpleType"/>
+        </attribute>
+      </optional>
+            <attribute name="isType" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+        <data type="boolean"/>
+      </attribute>
+    </interleave>
+  </define>
+
+  <!-- extend the sbml species -->
+  <define name="species.datatype" combine="interleave">
+    <interleave>
+      <optional>
+        <element name="listOfOutwardBindingSites" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="listOfOutwardBindingSites.datatype"/>
+        </element>
+      </optional>
+      <optional>
+        <element name="listOfSpeciesFeatures" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="listOfSpeciesFeatures.datatype"/>
+        </element>
+      </optional>
+      <optional>
+                <attribute name="speciesType" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="SIdRef.simpleType"/>
+        </attribute>
+      </optional>      
+    </interleave>
+  </define>
+  
+  <!-- extend the sbml reaction -->
+  <define name="reaction.datatype" combine="interleave">
+    <interleave>    
+      <optional>
+        <attribute name="isIntraSpeciesReaction" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <data type="boolean"/>
+        </attribute>
+      </optional>      
+    </interleave>
+  </define>
+  
+  <!-- extend the listOfReactions to take an IntraSpeciesReference class -->
+  <define name="listOfReactions.datatype" combine="interleave">
+    <interleave>
+      <zeroOrMore>
+        <element name="intraSpeciesReaction" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="intraSpeciesReaction.datatype"/>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </define>  
+
+  <!-- extend the sbml simpleSpeciesReference -->
+  <define name="simpleSpeciesReference.datatype" combine="interleave">
+    <interleave>    
+      <optional>
+                <attribute name="compartmentReference" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="SIdRef.simpleType"/>
+        </attribute>
+      </optional>      
+    </interleave>
+  </define>
+  
+  <!-- extend the sbml speciesReference -->
+  <define name="productSpeciesReference.datatype" combine="interleave">
+    <interleave>    
+      <optional>
+        <element name="listOfSpeciesTypeComponentMapsInProduct" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="listOfSpeciesTypeComponentMapsInProduct.datatype"/>
+        </element>
+      </optional>      
+    </interleave>
+  </define>
+  
+  <define name="reactantSpeciesReference.datatype" combine="interleave">
+    <interleave>    
+      <optional>
+        <element name="listOfSpeciesTypeComponentMapsInProduct" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="listOfSpeciesTypeComponentMapsInProduct.datatype"/>
+        </element>
+      </optional>      
+    </interleave>
+  </define>
+  
+  <!-- extend the sbml model; add a listOfSpeciesTypes -->
+  <define name="model.datatype" combine="interleave">
+    <interleave>
+      <optional>
+        <element name="listOfSpeciesTypes" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+          <ref name="listOfSpeciesTypes.datatype"/>
+        </element>
+      </optional>
+    </interleave>
+  </define>
+
+
+  <!-- extended sbml element  -->
+  <define name="sbml.datatype" combine="interleave">
+        <attribute name="required" ns="http://www.sbml.org/sbml/level3/version1/multi/version1">
+            <value type="boolean">
+                true
+            </value>
+    </attribute>
+  </define>
+
+</grammar>

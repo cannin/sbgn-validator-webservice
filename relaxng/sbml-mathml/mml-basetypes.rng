@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+ datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+
+<!-- basic types
+     these are elements that can occur alone within a math element
+     
+     <math>
+       <one of the elements listed below/>
+     </math>
+     
+     These elements are: csymbol, cn, ci, true, false
+      notanumber, pi, infinity, exponentiale  
+-->
+
+ <define name="csymbolURI.datatype">
+  <choice>
+   <value type="string">http://www.sbml.org/sbml/symbols/time</value>
+   <value type="string">http://www.sbml.org/sbml/symbols/delay</value>
+   <value type="string">http://www.sbml.org/sbml/symbols/avogadro</value>
+  </choice>
+ </define>
+ 
+ <define name="csymbol.datatype">
+  <ref name="mathml_attrib"/>
+  <attribute name="encoding">
+   <value type="string">text</value>
+  </attribute>
+  <attribute name="definitionURL">
+   <ref name="csymbolURI.datatype"/>
+  </attribute>
+  <data type="string"/>
+ </define>
+ 
+ <define name="ci.datatype">
+  <ref name="mathml_attrib"/>
+  <optional>
+   <attribute name="definitionURL">
+    <data type="anyURI"/>
+   </attribute>
+  </optional>
+  <data type="string"/>
+ </define>
+ 
+ <define name="cn_attribs">
+  <ref name="mathml_attrib"/>
+  <optional>
+   <attribute name="units" ns="http://www.sbml.org/sbml/level3/version1/core">
+    <data type="string"/>
+   </attribute>
+  </optional>
+ </define>
+ 
+<define name="cn_notype.datatype">
+ <ref name="cn_attribs"/>
+ <data type="double"/> 
+</define>
+
+ <define name="cn_integer.datatype">
+  <ref name="cn_attribs"/>
+  <attribute name="type">
+   <value type="NMTOKEN">integer</value>
+  </attribute>
+  <data type="integer"/> 
+ </define>
+ 
+ <define name="cn_real.datatype">
+  <ref name="cn_attribs"/>
+  <attribute name="type">
+   <value type="NMTOKEN">real</value>
+  </attribute>
+  <data type="double"/> 
+ </define>
+ 
+ <define name="double.datatype">
+  <data type="double"/>
+ </define>
+ 
+ <define name="cn_exponent.datatype">
+  <ref name="cn_attribs"/>
+  <attribute name="type">
+   <choice>
+   <value type="NMTOKEN">e-notation</value>
+    <value type="NMTOKEN">rational</value>
+   </choice>
+  </attribute>
+<text/>
+   <element name="sep">
+   <empty/>
+  </element>
+<text/>
+ </define>
+
+ <define name="cn.datatype">
+  <choice>
+   <ref name="cn_notype.datatype"/>
+   <ref name="cn_integer.datatype"/>
+   <ref name="cn_real.datatype"/>
+   <ref name="cn_exponent.datatype"/>
+  </choice>
+ </define>
+ 
+ <define name="true.datatype">
+  <ref name="mathml_attrib"/>
+ </define>
+ 
+ <define name="false.datatype">
+  <ref name="mathml_attrib"/>
+ </define>
+ 
+ <define name="notanumber.datatype">
+  <ref name="mathml_attrib"/>
+ </define>
+ 
+ <define name="pi.datatype">
+  <ref name="mathml_attrib"/>
+ </define>
+ 
+ <define name="infinity.datatype">
+  <ref name="mathml_attrib"/>
+ </define>
+ 
+ <define name="exponentiale.datatype">
+  <ref name="mathml_attrib"/>
+ </define>
+
+<define name="basetypes.datatype" combine="choice">
+ <choice>
+  <element name="csymbol">
+   <ref name="csymbol.datatype"></ref>
+  </element>
+  <element name="ci">
+   <ref name="ci.datatype"></ref>
+  </element>
+  <element name="cn">
+   <ref name="cn.datatype"/>
+  </element>
+  <element name="true">
+   <ref name="true.datatype"></ref>
+  </element>
+  <element name="false">
+   <ref name="false.datatype"></ref>
+  </element>
+  <element name="notanumber">
+   <ref name="notanumber.datatype"></ref>
+  </element>
+  <element name="pi">
+   <ref name="pi.datatype"></ref>
+  </element>
+  <element name="infinity">
+   <ref name="infinity.datatype"></ref>
+  </element>
+  <element name="exponentiale">
+   <ref name="exponentiale.datatype"></ref>
+  </element>
+ </choice>
+</define>
+ 
+</grammar>
