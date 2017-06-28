@@ -2,8 +2,9 @@ package org.sbgn.validator;
 
 import com.google.gson.Gson;
 import com.thaiopensource.validate.ValidationDriver;
-import org.sbgn.bindings.Sbgn;
+import org.sbgn.SbgnUtil;
 import org.sbgn.schematron.Issue;
+import org.sbgn.schematron.SchematronValidator;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
@@ -28,16 +29,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
-import javax.xml.validation.*;
-import javax.xml.XMLConstants;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import java.io.*;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.sbgn.*;
 
 public class Main {
 
@@ -161,7 +155,7 @@ public class Main {
 
         boolean result = false;
         try {
-            result = org.sbgn.SbgnUtil.isValid(tempXmlFile);
+            result = SbgnUtil.isValid(tempXmlFile);
         } catch (SAXException sex) {
             sex.printStackTrace();
             /*StackTraceElement elements[] = sex.getStackTrace();
@@ -188,7 +182,7 @@ public class Main {
         }
 
         try {
-            List<Issue> l = org.sbgn.schematron.SchematronValidator.validate(tempXmlFile);
+            List<Issue> l = SchematronValidator.validate(tempXmlFile);
             System.out.println("schematron " + l.toString());
             return true;
         } catch (IOException e) {
