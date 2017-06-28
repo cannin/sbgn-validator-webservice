@@ -30,6 +30,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -270,7 +271,12 @@ public class Main {
         // load relaxng validator
         ValidationDriver vDriver = new com.thaiopensource.validate.ValidationDriver();
         try {
-            vDriver.loadSchema(ValidationDriver.fileInputSource("src/main/resources/relaxng/sbml.rng"));
+            InputStream is = getResource("/relaxng/sbml.rng");
+            InputSource is2 = new InputSource(is);
+
+            //ValidationDriver.fileInputSource();
+
+            vDriver.loadSchema(is2);
         } catch (SAXException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -374,6 +380,15 @@ public class Main {
         }
         doc.getDocumentElement().normalize();
         return doc;
+    }
+
+    public static InputStream getResource(String res) throws IOException
+    {
+        //InputStream url = Main.class.getResourceAsStream(res);
+        InputStream url = new FileInputStream(res);
+        if (url == null) throw new IOException("Could not find resource '" + res + "' in classpath");
+        //return url.toString();
+        return url;
     }
 
 }
