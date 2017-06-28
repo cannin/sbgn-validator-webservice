@@ -1,5 +1,5 @@
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
-import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
+package org.sbgn.validator;
+
 import com.thaiopensource.validate.ValidationDriver;
 import org.sbgn.bindings.Sbgn;
 import org.sbgn.schematron.Issue;
