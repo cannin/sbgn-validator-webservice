@@ -117,6 +117,10 @@ public class Main {
             "</sbgn>";
 
     public static void main(String[] args) {
+
+        // test cmd:
+        // curl -X POST --data "xml=$(cat src/main/resources/example.sbgn)" http://localhost:4567/validateString
+
         post("/validateString", "application/xml", (req, res) -> {
             String xml = req.queryParams("xml");
             //System.out.println("string input: " + xml);
@@ -259,7 +263,7 @@ public class Main {
         // load relaxng validator
         ValidationDriver vDriver = new com.thaiopensource.validate.ValidationDriver();
         try {
-            vDriver.loadSchema(ValidationDriver.fileInputSource("relaxng/sbml.rng"));
+            vDriver.loadSchema(ValidationDriver.fileInputSource("src/main/resources/relaxng/sbml.rng"));
         } catch (SAXException e) {
             e.printStackTrace();
         } catch (IOException e) {
