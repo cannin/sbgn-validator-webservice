@@ -1,11 +1,10 @@
 package org.sbgn.validator;
 
 import com.google.gson.Gson;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
-import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
 import com.thaiopensource.validate.ValidationDriver;
-import org.sbgn.bindings.Sbgn;
+import org.sbgn.SbgnUtil;
 import org.sbgn.schematron.Issue;
+import org.sbgn.schematron.SchematronValidator;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
@@ -31,16 +30,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
-import javax.xml.validation.*;
-import javax.xml.XMLConstants;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.sbgn.*;
 
 public class Main {
 
@@ -166,7 +159,7 @@ public class Main {
 
         boolean result = false;
         try {
-            result = org.sbgn.SbgnUtil.isValid(tempXmlFile);
+            result = SbgnUtil.isValid(tempXmlFile);
         } catch (SAXException sex) {
             System.out.println("SAX exception");
             sex.printStackTrace();
@@ -196,7 +189,7 @@ public class Main {
         }
 
         try {
-            List<Issue> l = org.sbgn.schematron.SchematronValidator.validate(tempXmlFile);
+            List<Issue> l = SchematronValidator.validate(tempXmlFile);
             System.out.println("schematron " + l.toString());
             return true;
         } catch (IOException e) {
@@ -284,7 +277,12 @@ public class Main {
         // load relaxng validator
         ValidationDriver vDriver = new com.thaiopensource.validate.ValidationDriver();
         try {
-            vDriver.loadSchema(ValidationDriver.fileInputSource("src/main/resources/relaxng/sbml.rng"));
+            InputStream is = getResource("/relaxng/sbml.rng");
+            InputSource is2 = new InputSource(is);
+
+            //ValidationDriver.fileInputSource();
+
+            vDriver.loadSchema(is2);
         } catch (SAXException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -388,6 +386,15 @@ public class Main {
         }
         doc.getDocumentElement().normalize();
         return doc;
+    }
+
+    public static InputStream getResource(String res) throws IOException
+    {
+        //InputStream url = Main.class.getResourceAsStream(res);
+        InputStream url = new FileInputStream(res);
+        if (url == null) throw new IOException("Could not find resource '" + res + "' in classpath");
+        //return url.toString();
+        return url;
     }
 
 }
