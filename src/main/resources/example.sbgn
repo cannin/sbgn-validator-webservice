@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<sbgn
+        xmlns="http://sbgn.org/libsbgn/0.3">
+    <map id="neuronal_muscle_signalling.xml" language="process description">
+        <glyph id="_23d436e2-6633-42f2-98d0-00dbb962ac3d" class="compartment">
+            <label text="muscle cytosol"/>
+            <bbox x="761.1069337742531" y="165.66118664676014" w="475.0172196360252" h="404.1823563460308"/>
+        </glyph>
+        <glyph id="a0a8dd07-644b-4646-a305-ef249fa67752" class="macromolecule" compartmentRef="_23d436e2-6633-42f2-98d0-00dbb962ac3d">
+            <label text="myosin"/>
+            <bbox x="1133.2858326079895" y="260.05664504963187" w="70" h="35"/>
+            <extension>
+                <annotation>
+                    <rdf:RDF
+                            xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                            xmlns:sio="http://semanticscience.org/resource/">
+                        <rdf:Description rdf:about="#a0a8dd07-644b-4646-a305-ef249fa67752">
+                            <sio:SIO_000223>
+                                <rdf:Bag>
+                                    <rdf:li sio:SIO_000116="TEST" rdf:value="value"/>
+                                </rdf:Bag>
+                            </sio:SIO_000223>
+                        </rdf:Description>
+                    </rdf:RDF>
+                </annotation>
+            </extension>
+        </glyph>
+    </map>
+</sbgn>
