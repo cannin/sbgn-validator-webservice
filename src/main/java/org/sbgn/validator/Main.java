@@ -132,8 +132,8 @@ public class Main {
             //System.out.println("string input: " + xml);
             Response response = new Response();
             response = Main.validateXsd(xml, response);
-            /*json.isSchematronValid = Main.validateSchematron(xml);
-            json.isRenderValid = Main.validateRender(xml);
+            response = Main.validateSchematron(xml, response);
+            /*json.isRenderValid = Main.validateRender(xml);
             json.isAnnotationValid = Main.validateAnnotation(xml);*/
 
             Gson gson = new Gson();
@@ -159,25 +159,7 @@ public class Main {
 
         res.isXsdValid = false;
         try {
-            System.out.println("before validation");
             res.isXsdValid = SbgnUtil.isValid(tempXmlFile);
-            System.out.println("validated");
-        /*} catch (SAXException sex) {
-            System.out.println("SAX exception");
-            sex.printStackTrace();
-            res.xsdMessages.add("SAX exception: " + sex.getCause().getMessage());
-        } catch (UnmarshalException e) {
-            System.out.println("Unmarshal exception");
-            System.out.println(e.getCause().getMessage());
-            res.xsdMessages.add("Unmarshal exception: " + e.getCause().getMessage());
-        } catch (JAXBException e) {
-            System.out.println("JAXB exception");
-            System.out.println(e.getCause().getMessage());
-            res.xsdMessages.add("JAXB exception: " + e.getCause().getMessage());
-        } catch (IOException e) {
-            System.out.println("IO exception");
-            System.out.println(e.getCause().getMessage());
-            res.xsdMessages.add("IO exception: " + e.getCause().getMessage());*/
         } catch (Exception e) {
             System.out.println("Exception");
             System.out.println(e.toString());
@@ -187,7 +169,7 @@ public class Main {
         return res;
     }
 
-    public static boolean validateSchematron (String stringXml) {
+    public static Response validateSchematron (String stringXml, Response res) {
         File tempXmlFile = null;
         try {
             tempXmlFile = Main.toTempFile(stringXml);
@@ -195,20 +177,27 @@ public class Main {
             e.printStackTrace();
         }
 
+        res.isSchematronValid = false;
         try {
+            System.out.println("Validate schematron");
             List<Issue> l = SchematronValidator.validate(tempXmlFile);
-            System.out.println("schematron " + l.toString());
-            return true;
-        } catch (IOException e) {
+            System.out.println("schematron errors: " + l.toString());
+            if(l.size() == 0) {
+                res.isSchematronValid = true;
+            } else {
+                for(Issue issue: l) {
+                    System.out.println(issue.toString());
+                    res.schematronMessages.add(issue.toString());
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Exception");
+            System.out.println(e.toString());
             e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
+            res.schematronMessages.add("Schematron error: " + e.toString());
         }
-        return false;
+
+        return res;
     }
 
     private static File toTempFile(String s) throws IOException {
@@ -410,6 +399,7 @@ class Response {
     public boolean isXsdValid = false;
     public List<String> xsdMessages = new ArrayList<String>();
     public boolean isSchematronValid = false;
+    public List<String> schematronMessages = new ArrayList<String>();
     public boolean isRenderValid = false;
     public boolean isAnnotationValid = false;
 }
