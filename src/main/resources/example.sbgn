@@ -7,8 +7,6 @@
             <bbox x="761.1069337742531" y="165.66118664676014" w="475.0172196360252" h="404.1823563460308"/>
         </glyph>
         <glyph id="a0a8dd07-644b-4646-a305-ef249fa67752" class="macromolecule" compartmentRef="_23d436e2-6633-42f2-98d0-00dbb962ac3d">
-            <label text="myosin"/>
-            <bbox x="1133.2858326079895" y="260.05664504963187" w="70" h="35"/>
             <extension>
                 <annotation>
                     <rdf:RDF
@@ -24,6 +22,8 @@
                     </rdf:RDF>
                 </annotation>
             </extension>
+            <label text="myosin"/>
+            <bbox x="1133.2858326079895" y="260.05664504963187" w="70" h="35"/>
         </glyph>
     </map>
 </sbgn>

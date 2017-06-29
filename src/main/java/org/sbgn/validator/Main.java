@@ -130,15 +130,15 @@ public class Main {
         post("/validateString", "application/xml", (req, res) -> {
             String xml = req.queryParams("xml");
             //System.out.println("string input: " + xml);
-            Response json = new Response();
-            json.isXsdValid = Main.validateXsd(xml);
+            Response response = new Response();
+            response = Main.validateXsd(xml, response);
             /*json.isSchematronValid = Main.validateSchematron(xml);
             json.isRenderValid = Main.validateRender(xml);
             json.isAnnotationValid = Main.validateAnnotation(xml);*/
 
             Gson gson = new Gson();
-            System.out.println(gson.toJson(json));
-            return gson.toJson(json);
+            System.out.println(gson.toJson(response));
+            return gson.toJson(response);
 
             /*return "Xsd valid: " + isXsdValid + "\nSchematron valid: " + isSchematronValid
                     + "\nRenderInfo valid: " + isRenderValid
@@ -149,7 +149,7 @@ public class Main {
         Main.validateExtensions(xml);
     }
 
-    public static boolean validateXsd (String stringXml) {
+    public static Response validateXsd (String stringXml, Response res) {
         File tempXmlFile = null;
         try {
             tempXmlFile = Main.toTempFile(stringXml);
@@ -157,27 +157,34 @@ public class Main {
             e.printStackTrace();
         }
 
-        boolean result = false;
+        res.isXsdValid = false;
         try {
-            result = SbgnUtil.isValid(tempXmlFile);
-        } catch (SAXException sex) {
+            System.out.println("before validation");
+            res.isXsdValid = SbgnUtil.isValid(tempXmlFile);
+            System.out.println("validated");
+        /*} catch (SAXException sex) {
             System.out.println("SAX exception");
             sex.printStackTrace();
-            /*StackTraceElement elements[] = sex.getStackTrace();
-            for (int i = 0, n = elements.length; i < n; i++) {
-                System.err.println(elements[i].getFileName()
-                        + ":" + elements[i].getLineNumber()
-                        + ">> "
-                        + elements[i].getMethodName() + "()");
-            }*/
+            res.xsdMessages.add("SAX exception: " + sex.getCause().getMessage());
+        } catch (UnmarshalException e) {
+            System.out.println("Unmarshal exception");
+            System.out.println(e.getCause().getMessage());
+            res.xsdMessages.add("Unmarshal exception: " + e.getCause().getMessage());
         } catch (JAXBException e) {
             System.out.println("JAXB exception");
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.out.println("IO or unmarshall exception");
             System.out.println(e.getCause().getMessage());
+            res.xsdMessages.add("JAXB exception: " + e.getCause().getMessage());
+        } catch (IOException e) {
+            System.out.println("IO exception");
+            System.out.println(e.getCause().getMessage());
+            res.xsdMessages.add("IO exception: " + e.getCause().getMessage());*/
+        } catch (Exception e) {
+            System.out.println("Exception");
+            System.out.println(e.toString());
+            res.xsdMessages.add("XSD error: " + e.toString());
         }
-        return result;
+
+        return res;
     }
 
     public static boolean validateSchematron (String stringXml) {
@@ -401,6 +408,7 @@ public class Main {
 
 class Response {
     public boolean isXsdValid = false;
+    public List<String> xsdMessages = new ArrayList<String>();
     public boolean isSchematronValid = false;
     public boolean isRenderValid = false;
     public boolean isAnnotationValid = false;
