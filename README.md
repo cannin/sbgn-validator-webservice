@@ -37,6 +37,6 @@ docker build -t cannin/sbgn-validator-webservice .
 
 ## Run 
 ```
-docker run -p 9000:4567 -t cannin/sbgn-validator-webservice 
-docker run -i -p 9000:4567 -t cannin/sbgn-validator-webservice bash
+docker run --name sbgn-valid -p 9000:4567 -t cannin/sbgn-validator-webservice 
+docker run --name sbgn-valid -i -p 9000:4567 -t cannin/sbgn-validator-webservice bash
 ```
