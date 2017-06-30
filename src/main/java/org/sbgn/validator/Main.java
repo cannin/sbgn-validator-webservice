@@ -133,8 +133,8 @@ public class Main {
             Response response = new Response();
             response = Main.validateXsd(xml, response);
             response = Main.validateSchematron(xml, response);
-            /*json.isRenderValid = Main.validateRender(xml);
-            json.isAnnotationValid = Main.validateAnnotation(xml);*/
+            response = Main.validateRender(xml, response);
+            response = Main.validateAnnotation(xml, response);
 
             Gson gson = new Gson();
             System.out.println(gson.toJson(response));
@@ -146,7 +146,8 @@ public class Main {
         });
 
         // for testing purpose
-        Main.validateExtensions(xml);
+        //Main.validateExtensions(xml);
+        System.out.println("Spark is running...");
     }
 
     public static Response validateXsd (String stringXml, Response res) {
@@ -161,7 +162,7 @@ public class Main {
         try {
             res.isXsdValid = SbgnUtil.isValid(tempXmlFile);
         } catch (Exception e) {
-            System.out.println("Exception");
+            System.out.println("XSD validation exception");
             System.out.println(e.toString());
             res.xsdMessages.add("XSD error: " + e.toString());
         }
@@ -191,7 +192,7 @@ public class Main {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Exception");
+            System.out.println("Schematron validation exception");
             System.out.println(e.toString());
             e.printStackTrace();
             res.schematronMessages.add("Schematron error: " + e.toString());
@@ -209,17 +210,15 @@ public class Main {
         return temp;
     }
 
-    public static boolean validateExtensions(String stringXml) {
-        return validateRender(stringXml);
-    }
-
-    public static boolean validateRender(String stringXml) {
+    public static Response validateRender(String stringXml, Response res) {
         File sbgnFile = null;
         try {
             sbgnFile = Main.toTempFile(stringXml);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
+        res.isRenderValid = false;
 
         /*Sbgn sbgn;
         try {
@@ -228,16 +227,26 @@ public class Main {
             e.printStackTrace();
         }*/
 
+        System.out.println("before writing dom "+sbgnFile);
         // parse file as DOM
         Document doc = Main.fileAsDOM(sbgnFile);
+        System.out.println("after getting dom "+ doc);
+
+        NodeList nodeList=doc.getElementsByTagName("renderInformation");
+        System.out.println("nodelist count "+nodeList.getLength());
+        // no render extension present, consider it valid
+        if(nodeList.getLength() == 0) {
+            res.isRenderValid = true;
+            return res;
+        }
 
         // get renderInformation as string
-        NodeList nodeList=doc.getElementsByTagName("renderInformation");
         Element renderElement = (Element)nodeList.item(0); // only 1 renderInfo should be present in a file
         DOMImplementationLS lsImpl = (DOMImplementationLS)renderElement.getOwnerDocument().getImplementation().getFeature("LS", "3.0");
         LSSerializer serializer = lsImpl.createLSSerializer();
         serializer.getDomConfig().setParameter("xml-declaration", false); //by default its true, so set it to false to get String without xml-declaration
         String renderinfoString = serializer.writeToString(renderElement);
+        //System.out.println("after dom "+renderinfoString);
 
         //System.out.println(renderinfoString);
 
@@ -259,14 +268,15 @@ public class Main {
 
         rl.getListOfLocalRenderInformation();
         rl.createLocalRenderInformation();
+        System.out.println("after writing sbml");
 
         // write SBML mock document to string then inject renderInfo in it
         String sbmlWithRenderInfo = null;
         try {
             String model = new SBMLWriter().writeSBMLToString(sbmlDoc);
             sbmlWithRenderInfo = model.replace("<render:renderInformation/>", renderinfoString);
-            //System.out.println(sbmlWithRenderInfo);
-        } catch (SBMLException | XMLStreamException e) {
+            System.out.println("SBML render mockup:\n"+sbmlWithRenderInfo);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -279,32 +289,55 @@ public class Main {
             //ValidationDriver.fileInputSource();
 
             vDriver.loadSchema(is2);
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         // validate
         try {
-            vDriver.validate(new InputSource(new StringReader(sbmlWithRenderInfo)));
-        } catch (SAXException e) {
+
+            // the validate function outputs errors to err
+            // so we need to capture that
+
+            // Create a stream to hold the output
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PrintStream ps = new PrintStream(baos);
+            // IMPORTANT: Save the old System.out!
+            PrintStream old = System.err;
+            PrintStream oldOut = System.out;
+            // Tell Java to use your special stream
+            System.setErr(ps);
+            //System.setOut(ps);
+
+            System.out.println("before render validate");
+            res.isRenderValid = vDriver.validate(new InputSource(new StringReader(sbmlWithRenderInfo)));
+            System.err.println("after after validate");
+
+            // Put things back
+            System.err.flush();
+            //System.out.flush();
+            //System.setOut(oldOut);
+            System.setErr(old);
+            // Show what happened
+            System.out.println("Here: " + baos.toString()+" end");
+        } catch (Exception e) {
+            System.out.println("Render validation exception");
+            System.out.println(e.toString());
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            res.renderMessages.add("Render error: " + e.toString());
         }
 
-
-        return false;
+        return res;
     }
 
-    public static boolean validateAnnotation(String stringXml) {
+    public static Response validateAnnotation(String stringXml, Response res) {
         File sbgnFile = null;
         try {
             sbgnFile = Main.toTempFile(stringXml);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        res.isAnnotationValid = false;
 
         /*Sbgn sbgn;
         try {
@@ -318,6 +351,12 @@ public class Main {
 
         // extract annotation elements and transform to string
         NodeList nodeList=doc.getElementsByTagName("annotation");
+        // no annotation extension present, consider it valid
+        if(nodeList.getLength() == 0) {
+            res.isAnnotationValid = true;
+            return res;
+        }
+
         List<String> annotationList = new ArrayList<>();
         for (int i=0; i<nodeList.getLength(); i++)
         {
@@ -332,35 +371,36 @@ public class Main {
             annotationList.add(annotationString);
         }
 
-        Main.buildMockSBML(annotationList);
+        SBMLDocument sbml = new SBMLDocument(3, 1);
 
-        return false;
-    }
-
-    private static void buildMockSBML(List<String> annotationList) {
-        SBMLDocument doc = new SBMLDocument(3, 1);
-
-        System.out.println(doc);
+        System.out.println(sbml);
 
         for(String s:annotationList) {
             //m.appendAnnotation(s);
-            Model m = doc.createModel("TestANNOTATIONS");
+            Model m = sbml.createModel("TestANNOTATIONS");
             System.out.println(m);
             try {
                 m.getAnnotation().appendNonRDFAnnotation(s);
-            } catch (XMLStreamException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            System.out.println(m.getAnnotation().getFullAnnotationString());
 
-            doc.checkConsistency();
+            /*try {
+                String output = new SBMLWriter().writeSBMLToString(sbml);
+                System.out.println(output);
+            } catch (XMLStreamException e) {
+                e.printStackTrace();
+            }*/
 
-            System.out.println("error count: "+doc.getNumErrors());
+            sbml.checkConsistency();
 
-            doc.printErrors(System.out);
+            System.out.println("error count: "+sbml.getNumErrors());
+            System.out.println("list of errors: "+sbml.getListOfErrors().getValidationErrors().toString());
+
+            sbml.printErrors(System.out);
         }
 
-
+        return res;
     }
 
     private static Document fileAsDOM (File f) {
@@ -368,16 +408,16 @@ public class Main {
         DocumentBuilder db = null;
         try {
             db = dbf.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
+            System.out.println("docbuilder "+db);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         Document doc = null;
         try {
             doc = db.parse(f);
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+            System.out.println("in dom "+doc+" "+f);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         doc.getDocumentElement().normalize();
@@ -397,9 +437,11 @@ public class Main {
 
 class Response {
     public boolean isXsdValid = false;
-    public List<String> xsdMessages = new ArrayList<String>();
+    public List<String> xsdMessages = new ArrayList<>();
     public boolean isSchematronValid = false;
-    public List<String> schematronMessages = new ArrayList<String>();
+    public List<String> schematronMessages = new ArrayList<>();
     public boolean isRenderValid = false;
+    public List<String> renderMessages = new ArrayList<>();
     public boolean isAnnotationValid = false;
+    public List<String> annotationMessages = new ArrayList<>();
 }

@@ -2,6 +2,21 @@
 <sbgn
         xmlns="http://sbgn.org/libsbgn/0.3">
     <map id="neuronal_muscle_signalling.xml" language="process description">
+        <extension>
+            <renderInformation
+                    xmlns="http://www.sbml.org/sbml/level3/version1/render/version1" id="renderInformation" programName="sbgnviz" programVersion="3.1.0" backgroundColor="#000000">
+                <listOfColorDefinitions>
+                    <colorDefinition id="color_1" value="#ffffff7f"/>
+                    <colorDefinition id="color_2" value="#555555"/>
+                    <colorDefinition id="color_3" value="#ff6c7d7f"/>
+                </listOfColorDefinitions>
+                <listOfStyles>
+                    <style id="nodeffffff0.55555553.2514normalnormalHelvetica" idList="_82f19e9e-6aa2-42b3-8b5e-8cee17197085 _9007194d-c2e6-4939-a795-be71ae35a60d e95a1256-8a47-4aaf-b3d8-7d8387d5a31d _23d436e2-6633-42f2-98d0-00dbb962ac3d">
+                        <g fontSize="14" fontFamily="Helvetica" fontWeight="normal" fontStyle="normal" stroke="color_2" strokeWidth="3.25" fill="color_1"/>
+                    </style>
+                </listOfStyles>
+            </renderInformation>
+        </extension>
         <glyph id="_23d436e2-6633-42f2-98d0-00dbb962ac3d" class="compartment">
             <label text="muscle cytosol"/>
             <bbox x="761.1069337742531" y="165.66118664676014" w="475.0172196360252" h="404.1823563460308"/>
